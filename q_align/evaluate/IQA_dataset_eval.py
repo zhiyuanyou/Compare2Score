@@ -14,7 +14,7 @@ import json
 from tqdm import tqdm
 from collections import defaultdict
 import os
-from q_align.evaluate.correlation import cal_plcc_srcc_rmse
+from q_align.evaluate.correlation import cal_plcc_srcc
 import itertools
 import random
 from datasets import load_dataset
@@ -109,7 +109,7 @@ def main(args):
     tokenizer, model, image_processor, context_len = load_pretrained_model(args.model_path, args.model_base, model_name, args.load_8bit, args.load_4bit, device=args.device)
 
     #KonIQ-10k
-    anchor_dataset = load_dataset("VQA-CityU/Anchor_images")
+    anchor_dataset = load_dataset("/opt/data/private/142/Compare2Score/Anchor_images")
     anchor_matrix = np.array(
             [[5.0000000e-01, 2.5912809e-01, 3.3130276e-04, 1.6087297e-06, 1.1803027e-09],
              [7.4087191e-01, 5.0000000e-01, 2.4985345e-01, 9.9954158e-02, 1.8675303e-08],
@@ -121,21 +121,19 @@ def main(args):
     num_anchor_image_per_interval = 1
     num_anchor_image = anchor_intervals * num_anchor_image_per_interval
     anchor_indices = np.arange(0, num_anchor_image)
-    image_path = "/home/zhw/IQA/code/NeurIPS24/Q-Align/playground/data/"
+    image_path = "/opt/data/private/142/DataDepictQA/"
 
-    json_prefix =f"playground/data/test_jsons/1/"
+    json_prefix =f"/opt/data/private/142/DataDepictQA/DeQA-Score/"
     jsons = [
-        json_prefix + "live_test.json",
-        json_prefix + "clive_test.json",
-        json_prefix + "csiq_test.json",
-        json_prefix + "koniq10k_test.json",
-        json_prefix + "bid_test.json",
-        json_prefix + "kadid10k_test.json",
-        json_prefix + "spaq_testing_set.json",
-        json_prefix + "tid_testing_set.json",
-        json_prefix + "agi.json",
+        # json_prefix + "test_koniq_2k.json",
+        # json_prefix + "test_spaq_2k.json",
+        # json_prefix + "test_kadid_2k.json",
+        # json_prefix + "test_pipal_5k.json",
+        json_prefix + "test_livew_1k.json",
+        json_prefix + "test_agiqa_3k.json",
+        json_prefix + "test_tid2013_3k.json",
+        json_prefix + "test_csiq_866.json",
     ]
-    
 
 
     os.makedirs(f"results/{args.model_path}/", exist_ok=True)
@@ -224,7 +222,7 @@ def main(args):
         
                 gt_scores.append(gt_score) 
             with open(f"results/{args.model_path}/"+args.result_name, 'a') as f:
-                cc, srcc, rmse = cal_plcc_srcc_rmse((np.array(gt_scores)).astype(np.float64), (np.array(pre_soft_score)).astype(np.float64))
+                cc, srcc = cal_plcc_srcc((np.array(gt_scores)).astype(np.float64), (np.array(pre_soft_score)).astype(np.float64))
                 print("The PLCC: {}, SRCC: {} of using the soft preference matrix of the {} on {}".format(cc, srcc, args.model_path, json_.split("/")[-1]), file=f)
 
                

@@ -306,12 +306,12 @@ class MPLUGOwl2LlamaForCausalLM(LlamaForCausalLM, MPLUGOwl2MetaForCausalLM):
     def __init__(self, config):
         super(LlamaForCausalLM, self).__init__(config)
         self.model = MPLUGOwl2LlamaModel(config)
-        self.tokenizer = AutoTokenizer.from_pretrained("VQA-CityU/Compare2Score_1")
-        self.image_processor = CLIPImageProcessor.from_pretrained("VQA-CityU/Compare2Score_1")
+        # self.tokenizer = AutoTokenizer.from_pretrained("VQA-CityU/Compare2Score_1")
+        # self.image_processor = CLIPImageProcessor.from_pretrained("VQA-CityU/Compare2Score_1")
 
         self.lm_head = nn.Linear(config.hidden_size, config.vocab_size, bias=False)
-        self.preferential_ids_ = [id_[1] for id_ in self.tokenizer(["inferior", "worse", "similar", "better", "superior"])["input_ids"]]
-        self.anchor_images = load_dataset("VQA-CityU/Anchor_images")
+        # self.preferential_ids_ = [id_[1] for id_ in self.tokenizer(["inferior", "worse", "similar", "better", "superior"])["input_ids"]]
+        # self.anchor_images = load_dataset("VQA-CityU/Anchor_images")
         
         self.weight_tensor = np.array([0., 0.25, 0.5, 0.75, 1.], dtype=np.float16)
         self.anchor_matrix = np.array(
